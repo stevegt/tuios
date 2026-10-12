@@ -4400,3 +4400,15 @@ control cuts one thing from the fixed build and runs the test named.
 | The OSC rule back to "ends in `;?`" | `TestPaneViewFilter` ("title ending ;?: nothing reached the terminal") | **caught** |
 | A kitty command keeping its own `q=` | `TestPaneViewFilter` (the terminal got `q=2,a=d,q=1`) | **caught** |
 | The `ctx` check in `exitReason` (a closed window read as `killed 9`) | none in six runs | **not caught**: the stream sees the close first in every run here. One run before the guard gave `killed 9` (137). The guard stays. |
+
+### Configurable terminal page scroll and middle paste
+
+Run on 2026-10-11 on branch `keybindings`. The control ran the new E2E tests
+against a binary built from main at `377bc074`, before the actions, defaults and
+middle-button input route existed. Each requested behavior is an independent
+subtest, so an early page-scroll failure cannot hide a paste failure.
+
+| Control | Tests that fail | Verdict |
+| --- | --- | --- |
+| The main binary, with no terminal page-scroll actions | `TestDefaultPageAndMiddleBindings/page-scroll` and `TestPageAndMiddleBindingsCanBeChanged/page-scroll` (the viewport moved 0 lines and the shell received the raw PageUp sequence) | **caught** |
+| The main binary, with no configurable middle-button route | `TestDefaultPageAndMiddleBindings/middle-paste` and `TestPageAndMiddleBindingsCanBeChanged/middle-paste` (both timed out; the remapped config also reported `middle` as a config problem) | **caught** |
